@@ -1,0 +1,259 @@
+<!-- assets.html -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="/static/styles_assets.css">
+  <link rel="icon" href="/static/Assets/site-icon.png" type="image/x-icon" />
+  <title>Assets Library</title>
+</head>
+
+<body class="bg-image">
+
+  <!-- Navigation Bar -->
+  <header class="header-bg">
+    <nav class="navbar navbar-expand-lg navbar_size">
+      <div class="container">
+        <a class="navbar-brand" href="/"><img src="Assets\Logo.png"></a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+          aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="fa fa-bars"></span>
+        </button>
+        <div class="collapse navbar-collapse justify-content-center" id="navbarSupportedContent">
+          <ul class="navbar-nav mx-auto  mb-2 mb-lg-0">
+            <li class="nav-item px-1">
+              <a class="nav-link text-secondary" aria-current="page" href="/">Home</a>
+            </li>
+            <li class="nav-item px-1">
+              <a class="nav-link text-secondary" href="/How-it-Works">How it works?</a>
+            </li>
+            <li class="nav-item px-1">
+              <a class="nav-link  active text-white " href="/Assets-Library">Assets Library</a>
+            </li>
+            <li class="nav-item px-1">
+              <a class="nav-link text-secondary" href="/3d-Editor">3d Editor</a>
+            </li>
+          </ul>
+          <a href="/Upload-Video"><button class="btn custom-btn" type="button" href="/Upload-Video">Upload your
+              video</button></a>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <div class="container mt-5">
+    <div class="top">
+      <!-- Search Form -->
+      <form action="/Assets-Library" method="GET" class="input-group first_form">
+        <input type="text" name="query" class="form-control search_bar" placeholder="Search..." autocomplete="off">
+        <button type="submit" class="btn" style="background-color:  #3975FF; color: white;">Search</button>
+      </form>
+
+       <!-- Filters Dropdown -->
+      <div class="nav-item dropdown sec_form">
+        <a class="nav-link dropdown-toggle filter_icon_bg" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+          <img src="/static/Assets/filter.svg" class="filter_icon" alt="">
+        </a>
+        <ul class="dropdown-menu custom_menu">
+          <form action="/Assets-Library" method="POST" class="dropdown-item">
+              <div class="row" class="filters">
+                <!-- Category filter -->
+                <div class="sub_filter">
+                  <label for="category_filter" class="form-label">Category</label>
+                  <select class="form-select" id="category_filter" name="category_filter">
+                    <option value="">All Categories</option>
+                    <option value="Furniture">Furniture</option>
+                    <option value="Vehicles">Vehicles</option>
+                    <option value="3d Character">3d Character</option>
+                    <option value="Plants">Plants</option>
+                    <option value="Textures">Textures</option>
+                  </select>
+                </div>
+                <!-- Tags filter -->
+                <div class="sub_filter">
+                  <label for="tags_filter" class="form-label">Tags</label>
+                  <select class="form-select" id="tags_filter" name="tags_filter">
+                    <option value="">No Tag Selected</option>
+                    <option value="Game">Game</option>
+                    <option value="3d Model">3d Model</option>
+                    <option value="Character">Character</option>
+                    <option value="Car">Car</option>
+                    <option value="Furniture">Furniture</option>
+                    <option value="Illustration">Illustration</option>
+                    <option value="Texture">Texture</option>
+                    <option value="Maya">Maya</option>
+                  </select>
+                </div>
+                <!-- File type filter -->
+                <div class="sub_filter">
+                  <label for="file_type_filter" class="form-label">FileType</label>
+                  <select class="form-select" id="file_type_filter" name="file_type_filter">
+                    <option value="">All Types</option>
+                    <option value="obj">OBJ</option>
+                    <option value="stl">STL</option>
+                    <option value="fbx">FBX</option>
+                    <option value="png">PNG</option>
+                    <option value="blend">BLEND</option>
+                    <!-- Add more file types here -->
+                  </select>
+                </div>
+                <button class="filter_btn" type="submit" class="btn">Apply Filter</button>
+              </div>
+          </form>
+        </ul>
+      </div>
+    </div>
+</div>
+
+    <!-- Display Products -->
+    {% if products %}
+    <div class="container py-5">
+      <p style="color: #B5B5B5">Total Products: {{ total_products }}</p>
+      <div class="row row-cols-1 row-cols-md-3 g-4">
+        {% for product in products %}
+        <div class="col">
+          <div class="card product-card" onclick="window.open('/product/{{ product._id }}', '_blank')"
+            href="/product/{{ product._id }}">
+            <img src="{{ url_for('download', file_id=product.preview_image_id) }}" alt="Preview Image"
+              class="card-img-top product-image">
+            <div class="card-body">
+              <strong class="card-title">{{ product.title }}</strong>
+              <hr>
+              <strong class="small_card">{{ product.category }}</strong>
+              <strong class="small_card">{{ product.file_type }}</strong>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- Pagination -->
+    <div class="container mt-3 mb-5">
+      {% if total_products > per_page %}
+      <div class="pagination">
+        {% if page == 1 %}
+        <!-- If on the first page, previous button is inactive -->
+        <span class="disabled page_button_p"><img src="/static/Assets/arrow_left.svg"></span>
+        {% else %}
+        <!-- If not on the first page, previous button is active -->
+        <a href="{{ url_for('assets', page=page-1) }}" class="page_button_p_a"><img
+            src="/static/Assets/arrow_left.svg"></a>
+        {% endif %}
+
+        {% if total_products > page * per_page %}
+        <!-- If there are more pages, next button is active -->
+        <a href="{{ url_for('assets', page=page+1) }}" class="page_button_n_a"><img
+            src="/static/Assets/arrow_right.svg"></a>
+        {% else %}
+        <!-- If on the last page, next button is inactive -->
+        <span class="disabled page_button_n"><img src="/static/Assets/arrow_right.svg"></span>
+        {% endif %}
+      </div>
+      {% endif %}
+    </div>
+    {% endif %}
+
+    <!--Footer Section-->
+  <section class="footer">
+    <!-- Footer -->
+    <footer class="footer">
+      <!-- Grid container -->
+      <div class="container p-4">
+        <!--Grid row-->
+        <div class="row">
+          <!--Grid column-->
+          <div class="col-lg-6 col-md-12 mb-4 mb-md-0">
+            <img src="/static/Assets\Logo.png"></a>
+
+            <p class="footer_p">
+              Metanexi offers a suite of innovative tools
+              designed to simplify your journey into the world of 3D modeling.
+            </p>
+
+            <div class="footer_icons">
+              <i class="fab fa-facebook"></i>
+              <i class="fab fa-twitter"></i>
+              <i class="fab fa-instagram"></i>
+            </div>
+
+
+          </div>
+
+          <div class="col-lg-3 col-md-6 mb-4 mb-md-0" class="footer_link">
+            <h5>Quick links</h5>
+
+            <ul class="list-unstyled mb-0">
+              <li>
+                <a href="/"><button>Home</button></a>
+              </li>
+              <li>
+                <a href="/Upload-Video"><button>Generate 3d character</button></a>
+              </li>
+              <li>
+                <a href="/3d-Editor"><button>3d editor</button></a>
+              </li>
+              <li>
+                <a href="/Assets-Library"><button>Assets Library</button></a>
+              </li>
+            </ul>
+          </div>
+
+          <div class="col-lg-3 col-md-6 mb-4 mb-md-0" class="footer_link">
+            <h5>Support</h5>
+
+            <ul class="list-unstyled mb-0">
+              <li>
+                <a href="/Help"><button>Help</button></a>
+              </li>
+              <li>
+                <a href="/How-it-Works"><button>FAQ's</button></a>
+              </li>
+              <li>
+                <a href="/Contact"><button>Contact us</button></a>
+              </li>
+              <li>
+                <a href="/Team"><button>Our Team</button></a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+
+      <!-- Copyright -->
+      <div class="text-center p-3">
+        © 2024 Copyright:
+        <button class="footer_copyright">Metanexi.ai</button>
+      </div>
+      <!-- Copyright -->
+    </footer>
+    <!-- Footer -->
+  </section>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      // Load product list using HTMX on page load
+      document.addEventListener('DOMContentLoaded', function () {
+        fetchProductList();
+      });
+
+      // Fetch product list using HTMX
+      function fetchProductList() {
+        const productListContainer = document.getElementById('product-list');
+        productListContainer.innerHTML = '<p>Loading...</p>';
+        htmx.ajax('GET', window.location.href, null, {
+          headers: { 'X-Requested-With': 'XMLHttpRequest' },
+          update: productListContainer,
+          append: false
+        });
+      }
+    </script>
+</body>
+
+</html>
